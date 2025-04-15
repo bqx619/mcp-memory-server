@@ -6,8 +6,7 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
-	mcp_golang "github.com/metoro-io/mcp-golang"
-	"github.com/metoro-io/mcp-golang/transport/http"
+	"github.com/mark3labs/mcp-go/server"
 )
 
 func main() {
@@ -22,13 +21,15 @@ func main() {
 	vector := NewVectorAction(cfg.Vector)
 	tools := NewMcpTools(vector, ctx)
 
-	transport := http.NewHTTPTransport("/")
-	transport.WithAddr(fmt.Sprintf(":%d", cfg.HTTP.Port))
-
-	server := mcp_golang.NewServer(transport)
-	RegisterMcp(server, tools)
-
-	if err := server.Serve(); err != nil {
-		log.Fatal(err)
+	s := server.NewMCPServer(
+		"Memory MCP",
+		"0.0.1",
+		server.WithLogging(),
+		server.WithRecovery(),
+	)
+	sse := server.NewSSEServer(s)
+	RegisterMcp(s, tools)
+	if err := sse.Start(fmt.Sprintf(":%d", cfg.HTTP.Port)); err != nil {
+		fmt.Printf("Server error: %v\n", err)
 	}
 }
