@@ -1,0 +1,8 @@
+vector:
+  provider: ${VECTOR_PROVIDER}
+  url: ${VECTOR_URL}
+  token: ${VECTOR_TOKEN}
+http:
+  port: ${HTTP_PORT}
+
+
