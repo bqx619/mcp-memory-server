@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/mark3labs/mcp-go/server"
@@ -11,7 +12,11 @@ import (
 
 func main() {
 	var _ = godotenv.Load(".env")
-	cfg, err := LoadConfig("config.yaml")
+	cfgPath := os.Getenv("CONFIG_PATH")
+	if cfgPath == "" {
+		cfgPath = "config.yaml"
+	}
+	cfg, err := LoadConfig(cfgPath)
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
